@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetworkVision ERP - Prototype</title>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 800px;
+            margin: 20px;
+        }
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            margin: 0 auto 24px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 16px;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 32px;
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin: 32px 0;
+        }
+        .feature {
+            padding: 24px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+        .feature h3 {
+            color: #333;
+            margin: 0 0 12px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .feature p {
+            color: #666;
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .status {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 12px 24px;
+            border-radius: 8px;
+            margin: 24px 0;
+            font-weight: 500;
+        }
+        .instructions {
+            background: #fff3e0;
+            border: 1px solid #ffb74d;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 24px 0;
+            text-align: left;
+        }
+        .instructions h3 {
+            color: #e65100;
+            margin: 0 0 16px 0;
+        }
+        .instructions code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+        }
+        .instructions ol {
+            margin: 16px 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin: 24px 0;
+        }
+        .tech-badge {
+            background: #667eea;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .warning {
+            background: #ffebee;
+            border: 1px solid #f44336;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 24px 0;
+            color: #c62828;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">N</div>
+        <h1>NetworkVision ERP</h1>
+        <p class="subtitle">Modern ERP Platform for Indian Micro-Manufacturers</p>
+        
+        <div class="status">
+            ✅ Prototype Development Complete - Ready for Testing
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ Node.js Compatibility Issue Detected</strong><br>
+            Current Node.js version (12.22.9) is incompatible with modern Vite. Please upgrade to Node.js 14+ or use alternative running methods below.
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <h3>📊 Dashboard</h3>
+                <p>KPI cards, alerts, recent activities, and quick actions</p>
+            </div>
+            <div class="feature">
+                <h3>📦 Inventory Management</h3>
+                <p>Real-time stock tracking, barcode scanning, location mapping</p>
+            </div>
+            <div class="feature">
+                <h3>🏗️ BOM Management</h3>
+                <p>Interactive tree view, version control, cost analysis</p>
+            </div>
+            <div class="feature">
+                <h3>📈 Analytics</h3>
+                <p>Visual dashboards with charts and export capabilities</p>
+            </div>
+            <div class="feature">
+                <h3>📱 PWA Ready</h3>
+                <p>Offline-first, mobile-optimized progressive web app</p>
+            </div>
+            <div class="feature">
+                <h3>♿ Accessible</h3>
+                <p>ARIA compliant with keyboard navigation support</p>
+            </div>
+        </div>
+
+        <div class="tech-stack">
+            <span class="tech-badge">React 18</span>
+            <span class="tech-badge">TypeScript</span>
+            <span class="tech-badge">Material-UI</span>
+            <span class="tech-badge">Vite</span>
+            <span class="tech-badge">Apollo GraphQL</span>
+            <span class="tech-badge">Recharts</span>
+            <span class="tech-badge">PWA</span>
+        </div>
+
+        <div class="instructions">
+            <h3>🚀 How to Run the Prototype</h3>
+            
+            <h4>Option 1: Upgrade Node.js (Recommended)</h4>
+            <ol>
+                <li>Install Node.js 14+ from <a href="https://nodejs.org" target="_blank">nodejs.org</a></li>
+                <li>Navigate to project directory: <code>cd /home/swapnil/Avishkar/networkvision-erp</code></li>
+                <li>Install dependencies: <code>npm install</code></li>
+                <li>Start development server: <code>npm run dev</code></li>
+                <li>Open browser to: <code>http://localhost:3000</code></li>
+            </ol>
+
+            <h4>Option 2: Use Docker (Alternative)</h4>
+            <ol>
+                <li>Install Docker on your system</li>
+                <li>Create a Dockerfile with Node.js 18+ base image</li>
+                <li>Build and run the container</li>
+                <li>Access the application via container port mapping</li>
+            </ol>
+
+            <h4>Option 3: Static Build</h4>
+            <ol>
+                <li>Use a system with Node.js 14+ to build: <code>npm run build</code></li>
+                <li>Serve the <code>dist</code> folder using any web server</li>
+                <li>Example: <code>python -m http.server 3000</code> (from dist folder)</li>
+            </ol>
+
+            <h4>Option 4: Cloud Development Environment</h4>
+            <ol>
+                <li>Use GitHub Codespaces, Gitpod, or CodeSandbox</li>
+                <li>Clone the repository in the cloud environment</li>
+                <li>Run the development server in the cloud</li>
+                <li>Access via the provided cloud URL</li>
+            </ol>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <h3>📋 Project Structure</h3>
+                <p>Modular architecture with components, pages, hooks, and utilities organized for scalability</p>
+            </div>
+            <div class="feature">
+                <h3>🎨 Design System</h3>
+                <p>Custom Material-UI theme with blue-purple gradient (#667eea, #764ba2)</p>
+            </div>
+            <div class="feature">
+                <h3>🔧 Development Ready</h3>
+                <p>TypeScript, ESLint, hot reload, and comprehensive mock data included</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid #eee; color: #666; font-size: 0.9rem;">
+            <p><strong>NetworkVision ERP</strong> - Empowering India's micro-manufacturers with modern technology solutions</p>
+            <p>Built with ❤️ for the Indian manufacturing ecosystem</p>
+        </div>
+    </div>
+</body>
+</html>
