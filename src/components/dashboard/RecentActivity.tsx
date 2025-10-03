@@ -11,6 +11,8 @@ import {
   Box,
   Chip,
   Button,
+  alpha,
+  useTheme,
 } from '@mui/material';
 import {
   Inventory as InventoryIcon,
@@ -19,6 +21,7 @@ import {
   Verified as VerifiedIcon,
   Person as PersonIcon,
   ArrowForward as ArrowForwardIcon,
+  History as HistoryIcon,
 } from '@mui/icons-material';
 
 interface Activity {
@@ -105,7 +108,7 @@ const getActivityIcon = (type: Activity['type']) => {
   }
 };
 
-const getActivityColor = (type: Activity['type']) => {
+const getActivityColor = (type: Activity['type']): 'primary' | 'secondary' | 'info' | 'success' | 'warning' => {
   switch (type) {
     case 'inventory':
       return 'primary';
@@ -118,7 +121,7 @@ const getActivityColor = (type: Activity['type']) => {
     case 'user':
       return 'warning';
     default:
-      return 'default';
+      return 'primary';
   }
 };
 
@@ -138,69 +141,189 @@ const getStatusColor = (status?: Activity['status']) => {
 };
 
 const RecentActivity: React.FC = () => {
-  return (
-    <Card sx={{ height: '100%' }}>
-      <CardContent sx={{ p: 3 }}>
-        <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, mb: 2 }}>
-          Recent Activity
-        </Typography>
+  const theme = useTheme();
 
-        <List sx={{ p: 0, maxHeight: 400, overflow: 'auto' }}>
-          {mockActivities.map((activity) => (
-            <ListItem key={activity.id} alignItems="flex-start" sx={{ px: 0, py: 1 }}>
-              <ListItemAvatar>
-                <Avatar
-                  sx={{
-                    bgcolor: `${getActivityColor(activity.type)}.main`,
-                    width: 36,
-                    height: 36,
-                  }}
-                >
-                  {getActivityIcon(activity.type)}
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary={
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                      {activity.title}
-                    </Typography>
-                    {activity.status && (
-                      <Chip
-                        label={activity.status.toUpperCase()}
-                        size="small"
-                        color={getStatusColor(activity.status)}
-                        sx={{ height: 20, fontSize: '0.6875rem' }}
-                      />
-                    )}
-                  </Box>
-                }
-                secondary={
-                  <Box>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                      {activity.description}
-                    </Typography>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Typography variant="caption" color="text.secondary">
-                        by {activity.user}
+  return (
+    <Card
+      sx={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        maxHeight: 600,
+        background: `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.9)} 0%, ${alpha(theme.palette.background.paper, 0.95)} 100%)`,
+        backdropFilter: 'blur(20px)',
+      }}
+    >
+      <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
+          <HistoryIcon
+            sx={{
+              color: theme.palette.secondary.main,
+              fontSize: '1.5rem',
+            }}
+          />
+          <Typography variant="h6" sx={{ fontWeight: 700 }}>
+            Recent Activity
+          </Typography>
+        </Box>
+
+        <List
+          sx={{
+            p: 0,
+            flexGrow: 1,
+            overflow: 'auto',
+            '&::-webkit-scrollbar': {
+              width: '8px',
+            },
+            '&::-webkit-scrollbar-track': {
+              backgroundColor: 'transparent',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: alpha(theme.palette.primary.main, 0.2),
+              borderRadius: '10px',
+              border: '2px solid transparent',
+              backgroundClip: 'padding-box',
+            },
+            '&::-webkit-scrollbar-thumb:hover': {
+              backgroundColor: alpha(theme.palette.primary.main, 0.3),
+            },
+          }}
+        >
+          {mockActivities.map((activity, index) => (
+            <Box
+              key={activity.id}
+              sx={{
+                animation: `slideInRight 0.5s ease-out ${index * 0.1}s both`,
+                '@keyframes slideInRight': {
+                  from: {
+                    opacity: 0,
+                    transform: 'translateX(20px)',
+                  },
+                  to: {
+                    opacity: 1,
+                    transform: 'translateX(0)',
+                  },
+                },
+              }}
+            >
+              <ListItem
+                alignItems="flex-start"
+                sx={{
+                  px: 2,
+                  py: 2,
+                  mb: 1.5,
+                  borderRadius: 3,
+                  background: alpha(theme.palette[getActivityColor(activity.type)].main, 0.05),
+                  border: '1px solid',
+                  borderColor: alpha(theme.palette[getActivityColor(activity.type)].main, 0.1),
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: 3,
+                    background: `linear-gradient(180deg, ${theme.palette[getActivityColor(activity.type)].main} 0%, ${theme.palette[getActivityColor(activity.type)].dark} 100%)`,
+                  },
+                  '&:hover': {
+                    transform: 'translateX(8px)',
+                    boxShadow: `0 4px 12px 0 ${alpha(theme.palette[getActivityColor(activity.type)].main, 0.15)}`,
+                    borderColor: alpha(theme.palette[getActivityColor(activity.type)].main, 0.3),
+                  },
+                }}
+              >
+                <ListItemAvatar>
+                  <Avatar
+                    sx={{
+                      background: `linear-gradient(135deg, ${theme.palette[getActivityColor(activity.type)].main} 0%, ${theme.palette[getActivityColor(activity.type)].dark} 100%)`,
+                      width: 44,
+                      height: 44,
+                      boxShadow: `0 4px 8px 0 ${alpha(theme.palette[getActivityColor(activity.type)].main, 0.3)}`,
+                      '& svg': {
+                        fontSize: '1.25rem',
+                      },
+                    }}
+                  >
+                    {getActivityIcon(activity.type)}
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                        {activity.title}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {activity.timestamp}
-                      </Typography>
+                      {activity.status && (
+                        <Chip
+                          label={activity.status.toUpperCase()}
+                          size="small"
+                          color={getStatusColor(activity.status)}
+                          sx={{
+                            height: 22,
+                            fontSize: '0.6875rem',
+                            fontWeight: 700,
+                            boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.1)',
+                          }}
+                        />
+                      )}
                     </Box>
-                  </Box>
-                }
-              />
-            </ListItem>
+                  }
+                  secondary={
+                    <Box>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ mb: 0.5, fontWeight: 500 }}
+                      >
+                        {activity.description}
+                      </Typography>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          mt: 1,
+                        }}
+                      >
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: theme.palette[getActivityColor(activity.type)].main,
+                            fontWeight: 600,
+                          }}
+                        >
+                          👤 {activity.user}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500 }}>
+                          🕐 {activity.timestamp}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  }
+                />
+              </ListItem>
+            </Box>
           ))}
         </List>
 
-        <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid', borderColor: 'divider' }}>
+        <Box sx={{ mt: 3, pt: 2, borderTop: '1px solid', borderColor: 'divider' }}>
           <Button
             variant="outlined"
-            size="small"
+            size="medium"
             fullWidth
             endIcon={<ArrowForwardIcon />}
+            sx={{
+              fontWeight: 600,
+              py: 1.5,
+              borderWidth: '2px',
+              '&:hover': {
+                borderWidth: '2px',
+                transform: 'translateY(-2px)',
+              },
+            }}
           >
             View All Activity
           </Button>

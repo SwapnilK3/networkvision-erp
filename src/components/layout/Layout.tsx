@@ -27,7 +27,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const drawerOpen = isMobile ? mobileOpen : desktopOpen;
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+    <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
       {/* Header */}
       <Header
         open={drawerOpen}
@@ -54,22 +54,41 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
           }),
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100vh',
+          overflow: 'hidden',
         }}
       >
         {/* Toolbar spacer */}
         <Box
           sx={{
             ...theme.mixins.toolbar,
-            mb: 2,
           }}
         />
 
-        {/* Page Content */}
+        {/* Page Content - Scrollable Area */}
         <Box
           sx={{
+            flexGrow: 1,
+            overflow: 'auto',
             p: { xs: 2, sm: 3 },
-            minHeight: 'calc(100vh - 64px - 16px)',
             backgroundColor: 'background.default',
+            '&::-webkit-scrollbar': {
+              width: '10px',
+            },
+            '&::-webkit-scrollbar-track': {
+              backgroundColor: 'transparent',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: theme.palette.divider,
+              borderRadius: '10px',
+              border: '2px solid transparent',
+              backgroundClip: 'padding-box',
+            },
+            '&::-webkit-scrollbar-thumb:hover': {
+              backgroundColor: theme.palette.action.disabled,
+            },
           }}
         >
           {children}

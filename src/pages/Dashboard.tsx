@@ -89,17 +89,45 @@ const kpiData = [
 
 const Dashboard: React.FC = () => {
   return (
-    <Box>
+    <Box sx={{ position: 'relative' }}>
       <PageHeader
         title="Dashboard"
         subtitle="Welcome back! Here's what's happening with your business today."
         showBreadcrumbs={false}
       />
 
-      {/* KPI Cards */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
+      {/* KPI Cards with staggered animation */}
+      <Grid
+        container
+        spacing={3}
+        sx={{
+          mb: 4,
+          '& > .MuiGrid-item': {
+            animation: 'fadeInUp 0.6s ease-out both',
+          },
+          '@keyframes fadeInUp': {
+            from: {
+              opacity: 0,
+              transform: 'translateY(30px)',
+            },
+            to: {
+              opacity: 1,
+              transform: 'translateY(0)',
+            },
+          },
+        }}
+      >
         {kpiData.map((kpi, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={3}
+            key={index}
+            sx={{
+              animationDelay: `${index * 0.1}s`,
+            }}
+          >
             <StatCard
               title={kpi.title}
               value={kpi.value}
@@ -112,13 +140,28 @@ const Dashboard: React.FC = () => {
         ))}
       </Grid>
 
-      {/* Quick Actions */}
-      <Box sx={{ mb: 4 }}>
+      {/* Quick Actions with animation */}
+      <Box
+        sx={{
+          mb: 4,
+          animation: 'fadeIn 0.8s ease-out 0.5s both',
+          '@keyframes fadeIn': {
+            from: { opacity: 0 },
+            to: { opacity: 1 },
+          },
+        }}
+      >
         <QuickActions />
       </Box>
 
-      {/* Alerts and Activity */}
-      <Grid container spacing={3}>
+      {/* Alerts and Activity with animation */}
+      <Grid
+        container
+        spacing={3}
+        sx={{
+          animation: 'fadeIn 0.8s ease-out 0.7s both',
+        }}
+      >
         <Grid item xs={12} lg={6}>
           <AlertsPanel />
         </Grid>
