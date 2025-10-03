@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -23,73 +23,7 @@ import {
   ArrowForward as ArrowForwardIcon,
   History as HistoryIcon,
 } from '@mui/icons-material';
-
-interface Activity {
-  id: string;
-  type: 'inventory' | 'bom' | 'supplier' | 'compliance' | 'user';
-  title: string;
-  description: string;
-  timestamp: string;
-  user: string;
-  status?: 'completed' | 'pending' | 'approved' | 'rejected';
-}
-
-const mockActivities: Activity[] = [
-  {
-    id: '1',
-    type: 'inventory',
-    title: 'Stock Updated',
-    description: 'Added 500 units of SKU-001 to warehouse A',
-    timestamp: '10 minutes ago',
-    user: 'John Doe',
-    status: 'completed',
-  },
-  {
-    id: '2',
-    type: 'bom',
-    title: 'BOM Version Created',
-    description: 'Created BOM v2.1 for Product XYZ',
-    timestamp: '1 hour ago',
-    user: 'Jane Smith',
-    status: 'pending',
-  },
-  {
-    id: '3',
-    type: 'supplier',
-    title: 'Supplier Registered',
-    description: 'ABC Corp added to supplier database',
-    timestamp: '2 hours ago',
-    user: 'Mike Johnson',
-    status: 'approved',
-  },
-  {
-    id: '4',
-    type: 'compliance',
-    title: 'GST Return Filed',
-    description: 'Monthly GST return submitted successfully',
-    timestamp: '4 hours ago',
-    user: 'Sarah Wilson',
-    status: 'completed',
-  },
-  {
-    id: '5',
-    type: 'inventory',
-    title: 'Low Stock Alert',
-    description: 'SKU-045 stock level dropped below minimum',
-    timestamp: '6 hours ago',
-    user: 'System',
-    status: 'pending',
-  },
-  {
-    id: '6',
-    type: 'bom',
-    title: 'BOM Approved',
-    description: 'Product ABC BOM v1.5 approved by manager',
-    timestamp: '1 day ago',
-    user: 'David Brown',
-    status: 'approved',
-  },
-];
+import { getActivities, getTimeAgo, Activity } from '../../utils/localStorage';
 
 const getActivityIcon = (type: Activity['type']) => {
   switch (type) {
@@ -142,6 +76,13 @@ const getStatusColor = (status?: Activity['status']) => {
 
 const RecentActivity: React.FC = () => {
   const theme = useTheme();
+  const [activities, setActivities] = useState<Activity[]>([]);
+
+  useEffect(() => {
+    // Load activities from localStorage
+    const loadedActivities = getActivities();
+    setActivities(loadedActivities.slice(0, 6)); // Show last 6 activities
+  }, []);
 
   return (
     <Card
@@ -189,7 +130,7 @@ const RecentActivity: React.FC = () => {
             },
           }}
         >
-          {mockActivities.map((activity, index) => (
+          {activities.map((activity, index) => (
             <Box
               key={activity.id}
               sx={{
@@ -298,7 +239,7 @@ const RecentActivity: React.FC = () => {
                           👤 {activity.user}
                         </Typography>
                         <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500 }}>
-                          🕐 {activity.timestamp}
+                          🕐 {getTimeAgo(activity.timestamp)}
                         </Typography>
                       </Box>
                     </Box>

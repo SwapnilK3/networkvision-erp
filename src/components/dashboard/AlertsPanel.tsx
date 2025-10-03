@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Card,
   CardContent,
@@ -128,10 +129,11 @@ const getPriorityColor = (priority: Alert['priority']): 'error' | 'warning' | 's
 
 const AlertsPanel: React.FC = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
   
   const handleAlertClick = (actionUrl?: string) => {
     if (actionUrl) {
-      window.location.href = actionUrl;
+      navigate(actionUrl);
     }
   };
 

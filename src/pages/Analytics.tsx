@@ -40,6 +40,7 @@ import {
 
 import PageHeader from '../components/common/PageHeader';
 import StatCard from '../components/common/StatCard';
+import { getInventory, getSuppliers, getBOMs } from '../utils/localStorage';
 
 // Mock analytics data
 const inventoryData = [
@@ -79,12 +80,46 @@ const AnalyticsPage: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
   const [timeRange, setTimeRange] = useState('6months');
 
+  const handleExportCSV = () => {
+    const inventory = getInventory();
+    const suppliers = getSuppliers();
+    const boms = getBOMs();
+    
+    // Create comprehensive analytics CSV
+    const headers = ['Metric', 'Value', 'Category'];
+    const rows = [
+      ['Total Products', inventory.length, 'Inventory'],
+      ['Low Stock Items', inventory.filter(i => i.status === 'low').length, 'Inventory'],
+      ['Out of Stock', inventory.filter(i => i.status === 'out').length, 'Inventory'],
+      ['Total Suppliers', suppliers.length, 'Suppliers'],
+      ['Total BOMs', boms.length, 'BOMs'],
+      ['Active BOMs', boms.filter(b => b.status === 'active').length, 'BOMs'],
+      ['Total Inventory Value (₹)', inventory.reduce((sum, i) => sum + (i.quantity * i.price), 0), 'Financial'],
+    ];
+    
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `analytics_export_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const actions = (
     <>
       <Button
         variant="outlined"
         startIcon={<TableChartIcon />}
         sx={{ mr: 1 }}
+        onClick={handleExportCSV}
       >
         Export CSV
       </Button>

@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import {
   Grid,
   Box,
-  Button,
 } from '@mui/material';
 import {
   Inventory as InventoryIcon,
@@ -14,7 +13,6 @@ import {
   Assessment as AssessmentIcon,
   Verified as VerifiedIcon,
   Speed as SpeedIcon,
-  FileDownload as FileDownloadIcon,
 } from '@mui/icons-material';
 
 import PageHeader from '../components/common/PageHeader';
@@ -22,7 +20,7 @@ import StatCard from '../components/common/StatCard';
 import QuickActions from '../components/dashboard/QuickActions';
 import AlertsPanel from '../components/dashboard/AlertsPanel';
 import RecentActivity from '../components/dashboard/RecentActivity';
-import { getInventory, getSuppliers, getAlerts, getBOMs, getActivities, formatINR } from '../utils/localStorage';
+import { getInventory, getSuppliers, getAlerts, formatINR } from '../utils/localStorage';
 import { initializeData } from '../utils/seedData';
 
 const Dashboard: React.FC = () => {
@@ -91,54 +89,6 @@ const Dashboard: React.FC = () => {
       color: 'success' as const,
     },
   ]);
-
-  const handleExportDashboard = () => {
-    const inventory = getInventory();
-    const suppliers = getSuppliers();
-    const boms = getBOMs();
-    const activities = getActivities();
-    const alerts = getAlerts();
-    
-    const headers = ['Category', 'Metric', 'Value'];
-    const rows = [
-      ['Inventory', 'Total Products', inventory.length],
-      ['Inventory', 'Low Stock Items', inventory.filter(i => i.status === 'low').length],
-      ['Inventory', 'Out of Stock', inventory.filter(i => i.status === 'out').length],
-      ['Inventory', 'Total Value (₹)', inventory.reduce((sum, i) => sum + (i.quantity * i.price), 0)],
-      ['Suppliers', 'Total Suppliers', suppliers.length],
-      ['Suppliers', 'Average Rating', (suppliers.reduce((sum, s) => sum + s.rating, 0) / suppliers.length).toFixed(2)],
-      ['BOMs', 'Total BOMs', boms.length],
-      ['BOMs', 'Active BOMs', boms.filter(b => b.status === 'active').length],
-      ['Activities', 'Total Activities', activities.length],
-      ['Alerts', 'Total Alerts', alerts.length],
-      ['Alerts', 'Unread Alerts', alerts.filter(a => !a.read).length],
-    ];
-    
-    const csvContent = [
-      headers.join(','),
-      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
-    ].join('\n');
-    
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `dashboard_export_${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  const dashboardActions = (
-    <Button
-      variant="outlined"
-      startIcon={<FileDownloadIcon />}
-      onClick={handleExportDashboard}
-    >
-      Export Dashboard Data
-    </Button>
-  );
 
   useEffect(() => {
     // Initialize data on first load
@@ -243,7 +193,6 @@ const Dashboard: React.FC = () => {
         title="Dashboard"
         subtitle="नमस्ते! Welcome back! Here's what's happening with your business today."
         showBreadcrumbs={false}
-        actions={dashboardActions}
       />
 
       {/* KPI Cards with staggered animation */}

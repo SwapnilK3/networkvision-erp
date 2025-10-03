@@ -9,13 +9,49 @@ import {
   Add as AddIcon,
   FactCheck as FactCheckIcon,
   Description as DescriptionIcon,
+  FileDownload as FileDownloadIcon,
 } from '@mui/icons-material';
 
 import PageHeader from '../components/common/PageHeader';
 
 const CompliancePage: React.FC = () => {
+  const handleExportCompliance = () => {
+    // Mock compliance data export
+    const headers = ['Filing Type', 'Status', 'Due Date', 'Filed Date', 'Department'];
+    const rows = [
+      ['GST Return', 'Completed', '20-Oct-2024', '18-Oct-2024', 'Finance'],
+      ['Income Tax', 'Pending', '31-Oct-2024', '-', 'Finance'],
+      ['MSME Registration', 'Completed', '15-Sep-2024', '10-Sep-2024', 'Admin'],
+      ['Udyam Certificate', 'Active', '-', '05-Jan-2024', 'Admin'],
+      ['ESI Filing', 'Pending', '25-Oct-2024', '-', 'HR'],
+    ];
+    
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `compliance_export_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const actions = (
     <>
+      <Button
+        variant="outlined"
+        startIcon={<FileDownloadIcon />}
+        sx={{ mr: 1 }}
+        onClick={handleExportCompliance}
+      >
+        Export CSV
+      </Button>
       <Button
         variant="outlined"
         startIcon={<DescriptionIcon />}

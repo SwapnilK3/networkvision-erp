@@ -56,9 +56,7 @@ interface BOMTreeViewProps {
 const BOMTreeView: React.FC<BOMTreeViewProps> = ({
   data,
   onUpdateNode,
-  onAddNode,
   onDeleteNode,
-  onReorderNodes,
 }) => {
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -117,7 +115,7 @@ const BOMTreeView: React.FC<BOMTreeViewProps> = ({
     return null;
   };
 
-  const renderNode = (node: BOMTreeNode, index: number): React.ReactNode => {
+  const renderNode = (node: BOMTreeNode): React.ReactNode => {
     const hasChildren = node.children.length > 0;
     const isExpanded = expandedNodes.has(node.id);
     const indentLevel = node.level * 24;
@@ -209,10 +207,10 @@ const BOMTreeView: React.FC<BOMTreeViewProps> = ({
             </Card>
 
         {/* Render Children */}
-        {hasChildren && isExpanded && (
+        {isExpanded && hasChildren && (
           <Box sx={{ ml: 2, mt: 1 }}>
-            {node.children.map((child, childIndex) =>
-              renderNode(child, childIndex)
+            {node.children.map((child) =>
+              renderNode(child)
             )}
           </Box>
         )}
@@ -222,7 +220,7 @@ const BOMTreeView: React.FC<BOMTreeViewProps> = ({
 
   return (
     <Box>
-      {data.map((node, index) => renderNode(node, index))}
+      {data.map((node) => renderNode(node))}
 
       {/* Context Menu */}
       <Menu
@@ -281,15 +279,15 @@ const BOMTreeView: React.FC<BOMTreeViewProps> = ({
                 value={editingNode.wastagePercentage}
                 onChange={(e) => setEditingNode({ ...editingNode, wastagePercentage: Number(e.target.value) })}
               />
-              <FormControl>
+              <FormControl fullWidth>
                 <InputLabel>Optional Component</InputLabel>
                 <Select
-                  value={editingNode.isOptional}
+                  value={editingNode.isOptional ? 'true' : 'false'}
                   label="Optional Component"
-                  onChange={(e) => setEditingNode({ ...editingNode, isOptional: Boolean(e.target.value) })}
+                  onChange={(e) => setEditingNode({ ...editingNode, isOptional: e.target.value === 'true' })}
                 >
-                  <MenuItem value={false}>Required</MenuItem>
-                  <MenuItem value={true}>Optional</MenuItem>
+                  <MenuItem value="false">Required</MenuItem>
+                  <MenuItem value="true">Optional</MenuItem>
                 </Select>
               </FormControl>
             </Box>

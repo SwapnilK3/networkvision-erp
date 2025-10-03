@@ -88,7 +88,7 @@ const FileImport: React.FC<FileImportProps> = ({
             setCsvData(results.data);
             setImportStep('preview');
           },
-          error: (error) => {
+          error: (error: any) => {
             console.error('CSV parsing error:', error);
           },
         });

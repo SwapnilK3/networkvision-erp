@@ -18,14 +18,17 @@ import {
 } from '@mui/material';
 import {
   Add as AddIcon,
-  AccountTree as AccountTreeIcon,
   History as HistoryIcon,
   Assessment as AssessmentIcon,
+  FileUpload as FileUploadIcon,
+  FileDownload as FileDownloadIcon,
 } from '@mui/icons-material';
 
 import PageHeader from '../components/common/PageHeader';
 import BOMTreeView from '../components/bom/BOMTreeView';
+import BOMImportDialog from '../components/bom/BOMImportDialog';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { getBOMs } from '../utils/localStorage';
 
 // Mock BOM data
 const mockBOMData = [
@@ -39,7 +42,7 @@ const mockBOMData = [
     totalCost: 15750.00,
     componentCount: 12,
     lastUpdated: '2024-01-15',
-    createdBy: 'John Doe',
+    createdBy: 'Rajesh Joshi',
   },
   {
     id: 'bom-002',
@@ -119,11 +122,65 @@ const mockTreeData = [
 const BOMManagementPage: React.FC = () => {
   const navigate = useNavigate();
   const [tabValue, setTabValue] = useState(0);
-  const [createDialog, setCreateDialog] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [newBOMName, setNewBOMName] = useState('');
+
+  const handleExportBOMs = () => {
+    const boms = getBOMs();
+    
+    // Create CSV header
+    const headers = ['BOM Name', 'Version', 'Product Name', 'Product SKU', 'Status', 'Total Cost (₹)', 'Components Count', 'Created By', 'Created Date'];
+    
+    // Create CSV rows
+    const rows = boms.map(bom => [
+      bom.productName,
+      bom.version,
+      bom.productName,
+      bom.id,
+      bom.status,
+      bom.totalCost,
+      bom.components.length,
+      bom.createdBy,
+      new Date(bom.createdDate).toLocaleString('en-IN'),
+    ]);
+    
+    // Combine header and rows
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+    ].join('\n');
+    
+    // Create download link
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `BOMs_export_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const actions = (
     <>
+      <Button
+        variant="outlined"
+        startIcon={<FileDownloadIcon />}
+        sx={{ mr: 1 }}
+        onClick={handleExportBOMs}
+      >
+        Export CSV
+      </Button>
+      <Button
+        variant="outlined"
+        startIcon={<FileUploadIcon />}
+        sx={{ mr: 1 }}
+        onClick={() => setImportDialogOpen(true)}
+      >
+        Import BOM
+      </Button>
       <Button
         variant="outlined"
         startIcon={<HistoryIcon />}
@@ -143,7 +200,7 @@ const BOMManagementPage: React.FC = () => {
       <Button
         variant="contained"
         startIcon={<AddIcon />}
-        onClick={() => setCreateDialog(true)}
+        onClick={() => setCreateDialogOpen(true)}
       >
         Create BOM
       </Button>
@@ -194,9 +251,27 @@ const BOMManagementPage: React.FC = () => {
   };
 
   const handleCreateBOM = () => {
-    // Navigate to create BOM page or handle creation
-    setCreateDialog(false);
-    navigate('/bom/create');
+    if (!newBOMName.trim()) return;
+    
+    try {
+      const { addBOM } = require('../utils/localStorage');
+      addBOM({
+        productName: newBOMName,
+        version: 'v1.0',
+        components: [],
+        totalCost: 0,
+        createdBy: 'Admin User',
+        status: 'draft',
+      });
+      
+      alert('BOM created successfully!');
+      setCreateDialogOpen(false);
+      setNewBOMName('');
+      window.location.reload(); // Refresh to show new BOM
+    } catch (error) {
+      console.error('Error creating BOM:', error);
+      alert('Failed to create BOM. Please try again.');
+    }
   };
 
   return (
@@ -283,9 +358,9 @@ const BOMManagementPage: React.FC = () => {
               </Typography>
               <Grid container spacing={2}>
                 {[
-                  { version: 'v2.1', date: '2024-01-15', author: 'John Doe', changes: 'Updated copper wire specifications' },
-                  { version: 'v2.0', date: '2024-01-10', author: 'Jane Smith', changes: 'Added new bearing components' },
-                  { version: 'v1.9', date: '2024-01-05', author: 'Mike Johnson', changes: 'Cost optimization changes' },
+                  { version: 'v2.1', date: '2024-01-15', author: 'Rajesh Joshi', changes: 'Updated copper wire specifications' },
+                  { version: 'v2.0', date: '2024-01-10', author: 'Sanket Borade', changes: 'Added new bearing components' },
+                  { version: 'v1.9', date: '2024-01-05', author: 'Arya Danech', changes: 'Cost optimization changes' },
                 ].map((version) => (
                   <Grid item xs={12} key={version.version}>
                     <Card variant="outlined">
@@ -365,7 +440,7 @@ const BOMManagementPage: React.FC = () => {
       </Card>
 
       {/* Create BOM Dialog */}
-      <Dialog open={createDialog} onClose={() => setCreateDialog(false)} maxWidth="sm" fullWidth>
+      <Dialog open={createDialogOpen} onClose={() => setCreateDialogOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>Create New BOM</DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
@@ -391,12 +466,21 @@ const BOMManagementPage: React.FC = () => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setCreateDialog(false)}>Cancel</Button>
+          <Button onClick={() => setCreateDialogOpen(false)}>Cancel</Button>
           <Button variant="contained" onClick={handleCreateBOM} disabled={!newBOMName.trim()}>
             Create BOM
           </Button>
         </DialogActions>
       </Dialog>
+
+      <BOMImportDialog
+        open={importDialogOpen}
+        onClose={() => setImportDialogOpen(false)}
+        onSuccess={() => {
+          setImportDialogOpen(false);
+          window.location.reload();
+        }}
+      />
 
       <Routes>
         <Route path="/create" element={<div>Create BOM Form (Coming Soon)</div>} />

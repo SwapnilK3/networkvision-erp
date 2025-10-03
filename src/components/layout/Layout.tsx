@@ -47,9 +47,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         component="main"
         sx={{
           flexGrow: 1,
-          width: {
-            sm: `calc(100% - ${drawerOpen ? DRAWER_WIDTH : 64}px)`,
-          },
+          width: '100%',
           transition: theme.transitions.create(['width', 'margin'], {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
